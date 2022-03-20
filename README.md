@@ -17,5 +17,5 @@ docker push ghcr.io/schuhu/townhall:1.0.0
 ## Run in docker
 
 ```
-docker run -p 0.0.0.0:8080:8080/tcp  --env VERB=delighted ghcr.io/schuhu/townhall
+docker run -p 0.0.0.0:8080:8080/tcp  --env VERB=delighted ghcr.io/schuhu/townhall:1.0.0
 ```
