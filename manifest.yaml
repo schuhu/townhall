@@ -1,18 +1,56 @@
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+  name: townhall
+spec:
+  selector:
+    matchLabels:
+      app: townhall
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: townhall
+    spec:
+      containers:
+      - image: ghcr.io/schuhu/townhall:1.0.13
+        name: townhall
+        ports:
+        - containerPort: 8080
+        resources: {}
+        env:
+          - name: VERB
+            valueFrom:
+              secretKeyRef:
+                name: townhall-verb
+                key: verb
+                optional: false
+
+---
 apiVersion: v1
 kind: Pod
-metadata:
-  creationTimestamp: null
+metadata:  
   labels:
     app: townhall
   name: townhall
 spec:
   containers:
-  - image: ghcr.io/schuhu/townhall:1.0.0
+  - image: ghcr.io/schuhu/townhall:1.0.10
     name: townhall
+    ports:
+    - containerPort: 8080
     resources: {}
-  dnsPolicy: ClusterFirst
-  restartPolicy: Always
+    env:
+      - name: VERB
+        valueFrom:
+          secretKeyRef:
+            name: townhall-verb
+            key: verb
+            optional: false
+
 
 ---
 apiVersion: v1
@@ -26,3 +64,66 @@ spec:
     - protocol: TCP
       port: 8080
       name: http-townhall
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: townhall
+spec:
+  gateways:
+  - istio-system/osdp-wildcard-gw
+  hosts:
+  - th.dev.osdp.open.ch
+  http:
+  - route:
+    - destination:
+        host: townhall
+        port:
+          number: 8080
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: townhall
+spec:
+  action: ALLOW
+  rules:
+  - when:
+    - key: request.auth.claims[groups]
+      values:
+      - 1735c8a0-f558-4847-a22a-ec7493233928
+  selector:
+    matchLabels:
+      app: panta-doc
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: townhall
+spec:
+  jwtRules:
+  - forwardOriginalToken: false
+    issuer: https://auth.dev.osdp.open.ch/dex/
+    outputPayloadToHeader: "x-jwt-payload"
+  - forwardOriginalToken: false
+    issuer: https://sts.windows.net/fef8ae03-8a66-4fb8-b7f7-e69c065cdc91/
+    outputPayloadToHeader: "x-jwt-payload"
+  selector:
+    matchLabels:
+      app: townhall
+
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: ExternalSecret
+metadata:
+  name: townhall-verb
+spec:
+  dataFrom:
+  - key: central-dev/data/_shared/osdp-generic-ns/_public/townhall-verb
+  refreshInterval: 5s
+  secretStoreRef:
+    name: hcv-central
+  target: {}

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,7 +11,13 @@ import (
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	// name := r.Header["User-Agent"]
-	name := r.Header
+	header := r.Header["X-Jwt-Payload"][0]
+
+	nameB64,_ := base64.StdEncoding.DecodeString(header)
+	var jwtPayload map[string]interface{}
+	json.Unmarshal([]byte(nameB64), &jwtPayload)
+	name := jwtPayload["name"]
+
 	verb := os.Getenv("VERB") // glad then delighted
 	fmt.Fprintf(w, `
 	<!DOCTYPE html>
@@ -18,10 +26,12 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		<style>
 		  body {
 			font-family: 'Courier New';
-			background-image: url('https://www.open-systems.com/wp-content/uploads/2021/05/Home_Sphere_Tripplets_Green_R1-1.png');
+			min-height: 100vh; 
+			min-width: 100vh;
+			background-image: url('https://sso.osdp.open.ch/static/favicon.svg');
 			background-repeat: no-repeat;
-			background-attachment: fixed;
-			background-size: 100%% 100%%;
+			background-size: 50%% 50%%;
+			background-position: bottom 10px right 10px;
 		  }
 		</style>
 	  </head>
@@ -31,13 +41,13 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		<ul>
 			<li>Speed of setting up new services / products / namespaces</li>
 			<li>Fully integrated DNS and SSL setup (https://)</li>
-			<li>Full Microsoft Azure Active Directory Integration for Authentication and Authorization (you are %s, right?)</li>
-			<li>External Secrets Integration (hcv)</li>
+			<li>Full Microsoft Azure Active Directory Integration for Authentication and Authorization (you are %q, right?)</li>
+			<li>External Secrets Integration (%q): <a href="https://hcv.dev.open.ch/ui/vault/secrets/central-dev/show/_shared/osdp-generic-ns/_public/townhall-verb">hcv</a></li>
 			<li>And much more (Integrated monitoring and alerting, dashboards, auto reload on config change, etc) </li>
 		</ul>
 		<p>
 		  Want to start your own project?<br />
-		  --> <a href="https://go.co">https://g.co</a>
+		  --> <a href="https://docs.open.ch/docs/display/DEV/OSDP+Documentation">https://link to a tutorial</a>
 		</p>
 		<script>
 		  var i=0; 
@@ -49,7 +59,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	  </body>
 	</html>
 	
-	`, name, name, verb)
+	`, name, verb, name, verb)
 	fmt.Printf("Serving: %s \n", name)
 }
 
