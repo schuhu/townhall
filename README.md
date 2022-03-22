@@ -9,8 +9,8 @@ Takes the verb from an environment variable (hcv integration)
 ```
 echo $PAT | docker login ghcr.io --username schuhu --password-stdin
 docker build --tag townhall .
-docker tag townhall ghcr.io/schuhu/townhall:1.0.12
-docker push ghcr.io/schuhu/townhall:1.0.12
+docker tag townhall ghcr.io/schuhu/townhall:1.0.18
+docker push ghcr.io/schuhu/townhall:1.0.18
 ```
 
 

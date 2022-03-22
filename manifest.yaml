@@ -16,7 +16,7 @@ spec:
         app: townhall
     spec:
       containers:
-      - image: ghcr.io/schuhu/townhall:1.0.13
+      - image: ghcr.io/schuhu/townhall:1.0.18
         name: townhall
         ports:
         - containerPort: 8080
@@ -28,28 +28,6 @@ spec:
                 name: townhall-verb
                 key: verb
                 optional: false
-
----
-apiVersion: v1
-kind: Pod
-metadata:  
-  labels:
-    app: townhall
-  name: townhall
-spec:
-  containers:
-  - image: ghcr.io/schuhu/townhall:1.0.10
-    name: townhall
-    ports:
-    - containerPort: 8080
-    resources: {}
-    env:
-      - name: VERB
-        valueFrom:
-          secretKeyRef:
-            name: townhall-verb
-            key: verb
-            optional: false
 
 
 ---

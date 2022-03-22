@@ -12,17 +12,18 @@ import (
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	// name := r.Header["User-Agent"]
 	header := r.Header["X-Jwt-Payload"][0]
-
-	nameB64,_ := base64.StdEncoding.DecodeString(header)
+	nameB64,_ := base64.RawURLEncoding.DecodeString(header)
 	var jwtPayload map[string]interface{}
 	json.Unmarshal([]byte(nameB64), &jwtPayload)
 	name := jwtPayload["name"]
 
 	verb := os.Getenv("VERB") // glad then delighted
+
 	fmt.Fprintf(w, `
 	<!DOCTYPE html>
 	<html>
 	  <head>
+	  	<link href="https://sso.osdp.open.ch/static/favicon.svg" rel="icon" type="image/svg+xml">
 		<style>
 		  body {
 			font-family: 'Courier New';
@@ -60,7 +61,12 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	</html>
 	
 	`, name, verb, name, verb)
-	fmt.Printf("Serving: %s \n", name)
+	// var keys strings.Builder
+    // for k := range jwtPayload {
+    //     keys.WriteString(k)
+    // }
+	// fmt.Printf("Serving: %s %v \n", nameB64, keys.String())
+	fmt.Printf("Serving: %s \n", nameB64)
 }
 
 func main() {
