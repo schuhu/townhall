@@ -68,14 +68,15 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	  </head>
 	  <body>
 		<p id="d"></p>
-		<p id="collapsible">OSDP features on display here:</p>
+		<p id="collapsible">OSDP <b>enabling</b> features on display here:</p>
 		<div id="content">
 			<ul>
-				<li>Speed of setting up new services / products / namespaces</li>
-				<li>Fully integrated DNS and SSL setup (https://)</li>
-				<li>Full Microsoft Azure Active Directory Integration for Authentication and Authorization (you are %q, right?)</li>
-				<li>External Secrets Integration (%q): <a href="https://hcv.dev.open.ch/ui/vault/secrets/central-dev/show/_shared/osdp-generic-ns/_public/townhall-verb">hcv</a></li>
-				<li>And much more (Integrated monitoring and alerting, dashboards, auto reload on config change, etc) </li>
+				<li>Incredible speed of setting up new services / products / namespaces</li>
+				<li>Powerfull integrated DNS and SSL setup (https://)</li>
+				<li>Amazing Microsoft Azure Active Directory Integration for Authentication and Authorization (you are %q, right?)</li>
+				<li>Easy to use External Secrets Integration with hashicorp vault (%q): <a href="https://hcv.dev.open.ch/ui/vault/secrets/central-dev/show/_shared/osdp-generic-ns/_public/townhall-verb">hcv</a></li>
+				<li>And much more (Integrated monitoring and alerting, dashboards, auto reload on config change, various backends, etc) </li>
+				<li>And besides that, a lot of other <b>enabling</b> features provided by OSDP</li>
 			</ul>
 			<br />
 			<p>
