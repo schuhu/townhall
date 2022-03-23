@@ -16,7 +16,7 @@ spec:
         app: townhall
     spec:
       containers:
-      - image: ghcr.io/schuhu/townhall:1.0.22
+      - image: ghcr.io/schuhu/townhall:1.0.24
         name: townhall
         ports:
         - containerPort: 8080
